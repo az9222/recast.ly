@@ -1,21 +1,12 @@
 import VideoListEntry from './VideoListEntry.js';
 
-class VideoList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.videos = this.props.videos;
-  }
-
-  render() {
-    return (
-      <div className="video-list">
-        {this.videos.map(video =>
-          <VideoListEntry video={video} />
-        )}
-      </div>
-    );
-  }
-}
+const VideoList = (props) => (
+  <div className="video-list">
+    {props.videos.map(video =>
+      <VideoListEntry video={video} />
+    )}
+  </div>
+);
 
 // PropTypes tell other developers what `props` a component expects
 // Warnings will be shown in the console when the defined rules are violated
