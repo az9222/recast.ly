@@ -1,13 +1,18 @@
 import exampleVideoData from '../data/exampleVideoData.js';
+import Search from './Search.js';
 import VideoList from './VideoList.js';
 import VideoPlayer from './VideoPlayer.js';
 import VideoListEntry from './VideoListEntry.js';
+import YOUTUBE_API_KEY from '../config/youtube.js';
 
 class App extends React.Component {
   constructor(props) {
     super(props); 
     this.state = {
-      video: exampleVideoData[0]
+      video: exampleVideoData[0],
+      query: '',
+      max: 5,
+      key: YOUTUBE_API_KEY
     };
   }
 
@@ -22,7 +27,7 @@ class App extends React.Component {
       <div>
         <nav className="navbar">
           <div className="col-md-6 offset-md-3">
-            <div><h5><em>search</em> view goes here</h5></div>
+            <Search />
           </div>
         </nav>
         <div className="row">
