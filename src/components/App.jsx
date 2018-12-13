@@ -1,62 +1,39 @@
+
 import Search from './Search.js';
-import VideoList from './VideoList.js';
 import VideoPlayer from './VideoPlayer.js';
-import VideoListEntry from './VideoListEntry.js';
-import YOUTUBE_API_KEY from '../config/youtube.js';
+import VideoList from './VideoList.js';
 
 class App extends React.Component {
   constructor(props) {
-    super(props); 
+    super(props);
+
     this.state = {
-      video: {
-        id: {
-          videoId: 0
-        },
-        snippet: {
-          title: '',
-          description: ''
-        }
-      },
-      query: '',
-      max: 5,
-      key: YOUTUBE_API_KEY,
       videos: [],
+      currentVideo: null
     };
   }
 
   componentDidMount() {
-    this.props.searchYouTube({
-      query: this.state.query,
-      max: this.state.max,
-      key: this.state.key
-    }, (data) => {
-      this.setState({
-        video: data[0],
-        videos: data,
-      });
-    });
+    this.getYouTubeVideos('react tutorials');
   }
 
-  onClickEvent(video) {
-    this.setState({
-      video: video
-    });
+  getYouTubeVideos(query) {
+    var options = {
+      key: this.props.API_KEY,
+      query: query
+    };
+
+    this.props.searchYouTube(options, (videos) =>
+      this.setState({
+        videos: videos,
+        currentVideo: videos[0]
+      })
+    );
   }
 
-  handleInputChange(event) {
-    console.log(event.target.value);
+  handleVideoListEntryTitleClick(video) {
     this.setState({
-      query: event.target.value,
-    });
-    this.props.searchYouTube({
-      query: event.target.value,
-      max: this.state.max,
-      key: this.state.key
-    }, (data) => {
-      this.setState({
-        video: data[0],
-        videos: data
-      });
+      currentVideo: video
     });
   }
 
@@ -64,16 +41,35 @@ class App extends React.Component {
     return (
       <div>
         <nav className="navbar">
-          <div className="col-md-6 offset-md-3">
-            <Search query={this.state.query} handleInputChange={this.handleInputChange.bind(this)} />
+          <div className="row">
+            <div className="col-md-6 offset-md-3">
+              <Search
+                handleSearchInputChange={this.getYouTubeVideos.bind(this)}
+              />
+            </div>
           </div>
         </nav>
         <div className="row">
           <div className="col-md-7">
-            <VideoPlayer video={this.state.video} />
+            <VideoPlayer video={this.state.currentVideo}/>
           </div>
           <div className="col-md-5">
-            <VideoList videos={this.state.videos} onClickEvent={this.onClickEvent.bind(this)} />
+            {
+            /*
+            * It's very important to bind the context of this callback.
+            * Also acceptable is to pass a anonymous function expression with a fat
+            * arrow that inherits the surrounding lexical `this` context:
+            *
+            *   handleVideoListEntryTitleClick={(video) => this.onVideoListEntryClick(video)}
+            *                                  - or -
+            *   handleVideoListEntryTitleClick={(currentVideo) => this.setState({currentVideo})}
+            *
+            */
+            }
+            <VideoList
+              handleVideoListEntryTitleClick={this.handleVideoListEntryTitleClick.bind(this)}
+              videos={this.state.videos}
+            />
           </div>
         </div>
       </div>
@@ -84,4 +80,3 @@ class App extends React.Component {
 // In the ES6 spec, files are "modules" and do not share a top-level scope
 // `var` declarations will only exist globally where explicitly defined
 export default App;
-
